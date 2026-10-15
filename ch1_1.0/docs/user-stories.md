@@ -3,39 +3,43 @@
 Viết ít nhất 5 User Story, đủ 3 vai trò (Sinh viên, Ban CLB, Admin).
 Mỗi story có ít nhất 2 tiêu chí nghiệm thu (Given/When/Then hoặc gạch đầu dòng).
 
-# US-01 • Sinh viên: làm thẻ xe
-1. Chưa có thẻ -> yêu cầu làm thẻ -> tạo thẻ mới ở trạng thái chờ duyệt.
-2. Đã có thẻ đang hoạt động -> yêu cầu làm thẻ mới -> bị từ chối (không được cấp trùng).
+## US-01 · Sinh viên: <việc cần làm>
 
-# US-02 • Sinh viên: đăng ký gói cước
-1. Chọn đúng gói cước (ngày/tháng/năm) và thanh toán -> đăng ký -> thẻ được cập nhật thời hạn sử dụng.
-2. Gói cước hiện tại vẫn còn hạn -> đăng ký gia hạn -> cộng dồn thời gian sử dụng vào thẻ.
+Là [vai trò], tôi muốn [việc cần làm], để [lợi ích].
 
-# US-03 • Sinh viên: check-in vào nhà xe
-1. Thẻ hợp lệ và gói cước còn hạn -> check-in -> mở barie và tạo record CheckIn.
-2. Thẻ hết hạn -> check-in -> Thông báo ghi nợ (tối đa 2 lần/tháng) -> mở barie và tạo record CheckIn.
-3. Bị khóa hoặc không hợp lệ -> check-in -> báo lỗi, từ chối mở barie.
+- Tiêu chí 1: Given ... When ... Then ...
+- Tiêu chí 2: Given ... When ... Then ...
 
-# US-04 • Sinh viên: check-out ra nhà xe
-1. Có lịch sử CheckIn khớp với thông tin thẻ/biển số -> check-out -> mở barie và ghi nhận CheckOut.
-2. Không có lịch sử CheckIn hoặc sai biển số -> check-out -> báo lỗi, yêu cầu nhân viên xử lý.
+Là sinh viên, tôi muốn tham gia một CLB, để cải thiện các kỹ năng và hoàn thiện bản thân.
 
-# US-05 • Nhân viên: tạo thẻ xe
-1. Nhập đầy đủ thông tin sinh viên hợp lệ -> tạo -> cấp thành công mã thẻ (gắn đúng StudentId).
-2. Thông tin sinh viên trống hoặc không hợp lệ -> tạo -> báo lỗi.
+- Given chưa tham gia CLB, when tham gia CLB Then có tên trong `club.Members`.
+- Given đã tham gia CLB, When tham gia CLB, Then Không thể tham gia.
 
-# US-06 • Nhân viên: làm gói cước cho sinh viên (kích hoạt gói)
-1. Thẻ hợp lệ -> chọn gói cước và xác nhận -> cập nhật thành công hạn sử dụng của thẻ.
-2. Thẻ đang bị khóa (false) -> làm gói cước -> báo lỗi từ chối.
+## US-02 · Điểm danh (Check-in) sự kiện
+Là Sinh viên, tôi muốn thực hiện check-in khi đến tham dự sự kiện, để được ghi nhận sự có mặt thực tế trên hệ thống.
+- Given phiếu đăng ký đã được chuyển sang trạng thái Confirmed, When tôi tiến hành check-in, Then hệ thống xác nhận thành công và tạo bản ghi CheckIn.
+- Given phiếu đăng ký vẫn đang ở trạng thái Pending hoặc đã Cancelled, When tôi cố gắng check-in, Then hệ thống đưa ra cảnh báo không hợp lệ và từ chối ghi nhận.
+### Ban CLB
 
-# US-07 • Nhân viên: quản lý ra vào nhà xe của sinh viên
-1. Xem thống kê -> thấy tổng số xe đang có trong bãi và số lượng xe đã check-out trong ngày.
-2. Tìm kiếm thẻ/biển số -> liệt kê chi tiết lịch sử: thời gian check-in / check-out của sinh viên đó.
+## US-03 · Tạo mới SK
+Là Ban CLB, tôi muốn khởi tạo một sự kiện mới trên hệ thống, để mở đợt đăng ký và thu hút các bạn sinh viên tham gia.
 
-# US-08 • Admin: khóa thẻ xe
-1. Thẻ đang hoạt động -> khóa -> false.
-2. Lịch sử ra vào và lịch sử đăng ký gói cước của thẻ đó vẫn được giữ nguyên.
-3. Thẻ không hoạt động -> khóa -> true.
+- Given tên sự kiện hợp lệ và có Capacity > 0, When tôi bấm tạo sự kiện, Then sự kiện mới được khởi tạo và gán chính xác ClubId tương ứng.
 
+- Given tiêu đề sự kiện bị bỏ trống hoặc thiết lập Capacity <= 0, When tôi bấm tạo sự kiện, Then hệ thống báo lỗi dữ liệu nhập không hợp lệ.
 
+## US-04 · Theo dõi báo cáo tham dự
+Là Ban CLB, tôi muốn truy xuất báo cáo thống kê tình hình tham gia, để đánh giá hiệu quả tổ chức và tỷ lệ có mặt thực tế của sinh viên.
 
+- Given sự kiện đã mở đăng ký và điểm danh, When Ban CLB mở màn hình báo cáo, Then hệ thống hiển thị rõ thông số tổng số lượt đăng ký trên tổng sức chứa và tổng số sinh viên đã hoàn thành check-in.
+
+- Given sự kiện có danh sách đăng ký, When Ban CLB xem báo cáo chi tiết, Then hệ thống liệt kê cụ thể danh sách từng sinh viên kèm trạng thái đã check-in hay chưa điểm danh.
+### Admin
+## US-05 · Ngừng hoạt động thành viên
+Là Admin, tôi muốn tắt trạng thái hoạt động của một thành viên, để đảm bảo danh sách thành viên trong CLB luôn chính xác và đúng thực tế.
+
+- Given thành viên đang có trạng thái Active, When tôi thực hiện chuyển trạng thái ngừng hoạt động, Then phương thức IsActive() sẽ trả về giá trị false.
+
+- Given thành viên bị chuyển sang trạng thái ngừng hoạt động, When Admin hoặc hệ thống tra cứu lại dữ liệu, Then toàn bộ lịch sử đăng ký sự kiện từ trước đến nay của thành viên đó vẫn được bảo toàn nguyên vẹn trong hệ thống.
+
+<!-- TODO: thêm US-02 đến US-05 (hoặc nhiều hơn) -->

@@ -1,56 +1,75 @@
-# Sơ đồ lớp sơ bộ — EduHub
+Vẽ bằng Mermaid (hiển thị trực tiếp trên GitHub) hoặc xuất ảnh từ draw.io rồi đặt cạnh file này.
+Ghi rõ thuộc tính chính, khoá ngoại (FK) và bội số quan hệ (1, *, 0..1).
 
+```mermaid
 classDiagram
-    class Student {
-        +Guid Id
-        +string StudentCode
-        +string FullName
-        +string Email
-        +int DebtCount
-        +Create(studentCode, fullName, email) Student
-    }
-
-    class ParkingCard {
-        +Guid Id
-        +string CardNumber
-        +Guid StudentId
-        +DateTime? ExpiryDate
-        +bool IsActive
-        +Create(cardNumber, studentId) ParkingCard
-        +ExtendExpiry(days) void
-        +SetStatus(isActive) void
-    }
-
-    class SubscriptionPackage {
+    class Club {
         +Guid Id
         +string Name
-        +int DurationDays
-        +decimal Price
-        +Create(name, durationDays, price) SubscriptionPackage
     }
-
-    class Subscription {
+    class Event {
         +Guid Id
-        +Guid CardId
-        +Guid PackageId
-        +DateTime StartDate
-        +DateTime EndDate
-        +bool IsPaid
-        +Create(cardId, packageId, durationDays) Subscription
+        +Guid ClubId
     }
+    Club "1" --> "*" Event : tổ chức
 
-    class ParkingRecord {
+    %% TODO: bổ sung Member, Registration, CheckIn, đủ thuộc tính, phương thức và các quan hệ còn lại
+```
+classDiagram
+    class Member {
         +Guid Id
-        +Guid CardId
-        +string LicensePlate
-        +DateTime CheckInTime
-        +DateTime? CheckOutTime
-        +bool IsDebt
-        +CreateCheckIn(cardId, licensePlate, isDebt) ParkingRecord
-        +CheckOut() void
+        +string Name
+        +string Email
+        +string StudentCode
+        +DateTime JoinedAt
+        +Create(name, email, studentCode) Member
+        +IsActive() bool
     }
 
-    Student "1" -- "0..1" ParkingCard : FK_StudentId
-    ParkingCard "1" -- "0..*" Subscription : FK_CardId
-    SubscriptionPackage "1" -- "0..*" Subscription : FK_PackageId
-    ParkingCard "1" -- "0..*" ParkingRecord : FK_CardId
+    class Club {
+        +Guid Id
+        +string Name
+        +string Description
+        +DateTime CreatedAt
+        +IReadOnlyList~Member~ Members
+        +Create(name, description) Club
+        +AddMember(member) void
+        +MemberCount() int
+    }
+
+    class Event {
+        +Guid Id
+        +Guid ClubId
+        +string Title
+        +DateTime Date
+        +int Capacity
+        +bool IsOnline
+        +Create(clubId, title, date, capacity, isOnline) Event
+        +HasCapacity(registeredCount) bool
+    }
+
+    class Registration {
+        +Guid Id
+        +Guid MemberId
+        +Guid EventId
+        +DateTime RegisteredAt
+        +string Status
+        +Create(memberId, eventId) Registration
+        +Confirm() void
+        +Cancel() void
+    }
+
+    class CheckIn {
+        +Guid Id
+        +Guid RegistrationId
+        +DateTime CheckedInAt
+        +string Method
+        +Create(registration, method) CheckIn
+        +Summary() string
+    }
+
+    Club "1" -- "0..*" Member : FK_ClubId
+    Club "1" -- "0..*" Event : FK_ClubId
+    Member "1" -- "0..*" Registration : FK_MemberId
+    Event "1" -- "0..*" Registration : FK_EventId
+    Registration "1" -- "0..1" CheckIn : FK_RegistrationId
